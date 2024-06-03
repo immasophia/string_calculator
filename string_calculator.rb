@@ -1,7 +1,7 @@
 class StringCalculator
   def self.add(numbers)
     return 0 if numbers.empty?
-    delimiters, numbers = parse_input(numbers)
+    delimiters, numbers = parse_numbers(numbers)
     numbers = split_numbers(numbers, delimiters).map(&:to_i)
 
     negatives = numbers.select{ |num| num < 0}
@@ -12,17 +12,17 @@ class StringCalculator
     numbers.select{ |num| num <= 1000}.sum
   end
 
-  def self.parse_input(numbers)
+  def self.parse_numbers(numbers)
     if numbers.start_with?("//")
       header, numbers  = numbers.split("\n", 2)
-      delimiters = parse_delimiters(header) 
+      delimiters = get_delimiters(header) 
     else
       delimiters = [",", "\n"]
     end
     return [delimiters, numbers]
   end
 
-  def self.parse_delimiters(header)
+  def self.get_delimiters(header)
     if header.include?("[") && header.include?("]")
       delimiters = []
       delimiter_section = header[2..-1]

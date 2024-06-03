@@ -1,60 +1,61 @@
-require 'minitest/autorun'
+require 'rspec'
 require_relative 'string_calculator'
 
-class TestStringCalculator < Minitest::Test
-  def test_empty_string
-    assert_equal 0, StringCalculator.add("")
-  end
+RSpec.describe StringCalculator do
+  describe '.add' do
+    it 'returns 0 for an empty string' do
+      expect(StringCalculator.add("")).to eq(0)
+    end
 
-  def test_single_number
-    assert_equal 1, StringCalculator.add("1")
-    assert_equal 5, StringCalculator.add("5")
-  end
+    it 'returns the number for a single number' do
+      expect(StringCalculator.add("1")).to eq(1)
+      expect(StringCalculator.add("5")).to eq(5)
+    end
 
-  def test_two_numbers
-    assert_equal 3, StringCalculator.add("1,2")
-    assert_equal 9, StringCalculator.add("4,5")
-  end
+    it 'returns the sum of two numbers' do
+      expect(StringCalculator.add("1,2")).to eq(3)
+      expect(StringCalculator.add("4,5")).to eq(9)
+    end
 
-  def test_multiple_numbers
-    assert_equal 6, StringCalculator.add("1,2,3")
-    assert_equal 15, StringCalculator.add("1,2,3,4,5")
-  end
+    it 'returns the sum of multiple numbers' do
+      expect(StringCalculator.add("1,2,3")).to eq(6)
+      expect(StringCalculator.add("1,2,3,4,5")).to eq(15)
+    end
 
-  def test_newline_delimiter
-    assert_equal 6, StringCalculator.add("1\n2,3")
-    assert_equal 10, StringCalculator.add("1\n2\n3,4")
-  end
+    it 'handles newlines as delimiters' do
+      expect(StringCalculator.add("1\n2,3")).to eq(6)
+      expect(StringCalculator.add("1\n2\n3,4")).to eq(10)
+    end
 
-  def test_custom_delimiter
-    assert_equal 3, StringCalculator.add("//;\n1;2")
-    assert_equal 6, StringCalculator.add("//|\n1|2|3")
-    assert_equal 6, StringCalculator.add("//***\n1***2***3")
-    assert_equal 10, StringCalculator.add("//***\n1***2***3***4")
-  end
+    it 'supports custom delimiters' do
+      expect(StringCalculator.add("//;\n1;2")).to eq(3)
+      expect(StringCalculator.add("//|\n1|2|3")).to eq(6)
+      expect(StringCalculator.add("//***\n1***2***3")).to eq(6)
+      expect(StringCalculator.add("//***\n1***2***3***4")).to eq(10)
+    end
 
-  def test_negative_numbers
-    exception = assert_raises(RuntimeError) { StringCalculator.add("1,-2,3,-4") }
-    assert_equal "negatives not allowed: -2, -4", exception.message
-  end
+    it 'raises an error for negative numbers' do
+      expect { StringCalculator.add("1,-2,3,-4") }.to raise_error(RuntimeError, "negatives not allowed: -2, -4")
+    end
 
-  def test_ignore_large_numbers
-    assert_equal 2, StringCalculator.add("2,1001")
-    assert_equal 1002, StringCalculator.add("2,1000")
-  end
+    it 'ignores numbers larger than 1000' do
+      expect(StringCalculator.add("2,1001")).to eq(2)
+      expect(StringCalculator.add("2,1000")).to eq(1002)
+    end
 
-  def test_multi_char_delimiter
-    assert_equal 6, StringCalculator.add("//[***]\n1***2***3")
-    assert_equal 10, StringCalculator.add("//[---]\n1---2---3---4")
-  end
+    it 'supports multi-character delimiters' do
+      expect(StringCalculator.add("//[***]\n1***2***3")).to eq(6)
+      expect(StringCalculator.add("//[---]\n1---2---3---4")).to eq(10)
+    end
 
-  def test_multiple_delimiters
-    assert_equal 6, StringCalculator.add("//[*][%]\n1*2%3")
-    assert_equal 10, StringCalculator.add("//[**][%%]\n1**2%%3**4")
-  end
+    it 'supports multiple delimiters' do
+      expect(StringCalculator.add("//[*][%]\n1*2%3")).to eq(6)
+      expect(StringCalculator.add("//[**][%%]\n1**2%%3**4")).to eq(10)
+    end
 
-  def test_multiple_long_delimiters
-    assert_equal 6, StringCalculator.add("//[***][%%]\n1***2%%3")
-    assert_equal 10, StringCalculator.add("//[--][+++]\n1--2+++3--4")
+    it 'supports multiple long delimiters' do
+      expect(StringCalculator.add("//[***][%%]\n1***2%%3")).to eq(6)
+      expect(StringCalculator.add("//[--][+++]\n1--2+++3--4")).to eq(10)
+    end
   end
 end
