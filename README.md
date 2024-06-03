@@ -1,5 +1,5 @@
 **Rspec test suite**:
-- **Install RSpec if you haven't already:**
+- **Install RSpec:**
 
   ```
   gem install rspec
